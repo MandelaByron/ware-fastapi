@@ -1,5 +1,5 @@
-applicationName: ware-fastapi-codedeploy
-deploymentGroupName: ware-fastapi-deployment-group
+applicationName: ware-fastapi-app
+deploymentGroupName: ware-fastapi-group
 revision:
   revisionType: AppSpecContent
   appSpecContent:
