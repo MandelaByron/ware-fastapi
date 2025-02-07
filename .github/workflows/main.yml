@@ -23,6 +23,8 @@ env:
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ware-fastapi-container           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
+  ACTIONS_STEP_DEBUG: true
+  ACTIONS_RUNNER_DEBUG: true
 
 jobs:
   deploy:
