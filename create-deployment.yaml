@@ -9,7 +9,7 @@ revision:
         - TargetService:
             Type: AWS::ECS::Service
             Properties:
-              TaskDefinition: "task-definition.json"
+              TaskDefinition: arn:aws:ecs:eu-north-1:386056457794:task-definition/ware-fastapi-task:1
               LoadBalancerInfo:
                 ContainerName: "ware-fastapi-container"
                 ContainerPort: 8000
