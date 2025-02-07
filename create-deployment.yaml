@@ -1,0 +1,16 @@
+applicationName: ware-fastapi-codedeploy
+deploymentGroupName: ware-fastapi-deployment-group
+revision:
+  revisionType: AppSpecContent
+  appSpecContent:
+    content: |
+      version: 0.0
+      Resources:
+        - TargetService:
+            Type: AWS::ECS::Service
+            Properties:
+              TaskDefinition: "task-definition.json"
+              LoadBalancerInfo:
+                ContainerName: "ware-fastapi-container"
+                ContainerPort: 8000
+
