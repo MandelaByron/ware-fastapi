@@ -25,6 +25,8 @@ env:
                                                # containerDefinitions section of your task definition
   ACTIONS_STEP_DEBUG: true
   ACTIONS_RUNNER_DEBUG: true
+  CODEDEPLOY_APPLICATION: ware-fastapi-app
+  CODEDEPLOY_DEPLOYMENT_GROUP: ware-fastapi-group
 
 jobs:
   deploy:
@@ -68,10 +70,10 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Deploy to AWS CodeDeploy (Blue/Green)
+        run: |
+            aws deploy create-deployment \
+                --application-name ${{ env.CODEDEPLOY_APPLICATION }} \
+                --deployment-group-name ${{ env.CODEDEPLOY_DEPLOYMENT_GROUP }} \
+                --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"content\":\"$(cat appspec.yml | jq -Rsa .)\"}}" \
+                --region ${{ env.AWS_REGION }}
