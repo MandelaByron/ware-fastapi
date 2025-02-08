@@ -1,7 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
 
 # GitHub recommends pinning actions to a commit SHA.
 # To get a newer version, you will need to update the SHA.
@@ -16,17 +12,13 @@ on:
 
 env:
   AWS_REGION: eu-north-1                  # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: ware-fastapi-repository           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: ware-fastapi-repo           # set this to your Amazon ECR repository name
   ECS_SERVICE: ware-fastapi-service               # set this to your Amazon ECS service name
-  ECS_CLUSTER: FastAPI                # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: task-definition.json # set this to the path to your Amazon ECS task definition
+  ECS_CLUSTER: ware-fastapi-cluster                # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: ware-fastapi-task-revision6.json # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ware-fastapi-container           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
-  ACTIONS_STEP_DEBUG: true
-  ACTIONS_RUNNER_DEBUG: true
-  CODEDEPLOY_APPLICATION: ware-fastapi-app
-  CODEDEPLOY_DEPLOYMENT_GROUP: ware-fastapi-group
 
 jobs:
   deploy:
@@ -70,6 +62,7 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy to AWS CodeDeploy (Blue/Green)
-        run: |
-            aws deploy create-deployment --cli-input-yaml file://create-deployment.yaml --region ${{ env.AWS_REGION }}
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}

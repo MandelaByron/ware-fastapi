@@ -13,7 +13,7 @@ app = FastAPI()
 #client = client_manager.get_client()
 @app.get("/")
 def health_check():
-    return {"status": "ok to go"}
+    return {"status": "ok"}
 
 def format_us_phone(number: str) -> str:
     """Formats a U.S. phone number to (XXX) YYY-ZZZZ, handling +1 country code if present."""
