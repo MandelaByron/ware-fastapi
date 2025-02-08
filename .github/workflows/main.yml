@@ -15,7 +15,7 @@ env:
   ECR_REPOSITORY: ware-fastapi-repo           # set this to your Amazon ECR repository name
   ECS_SERVICE: ware-fastapi-service               # set this to your Amazon ECS service name
   ECS_CLUSTER: ware-fastapi-cluster                # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: ware-fastapi-task-revision6.json # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION: task.json # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ware-fastapi-container           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
@@ -66,6 +66,17 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
+
+      # - name: Register ECS task definition
+      #   id: register-task-def
+      #   run: |
+      #     TASK_DEF=$(aws ecs register-task-definition --cli-input-json file://ware-fastapi-task-revision6.json)
+      #     TASK_DEF_ARN=$(echo $TASK_DEF | jq -r '.taskDefinition.taskDefinitionArn')
+      #     echo "::set-output name=task-def-arn::$TASK_DEF_ARN"
+        
+      # - name: Update ECS service
+      #   run: |
+      #     aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition ${{ steps.register-task-def.outputs.task-def-arn }} --force-new-deployment
 
       - name: Update ECS service
         run: |
