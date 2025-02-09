@@ -2,7 +2,7 @@ import httpx
 import json
 from dotenv import load_dotenv
 import os
-
+import asyncio
 load_dotenv()
 
 

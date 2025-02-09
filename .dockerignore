@@ -6,4 +6,5 @@ app.egg-info
 .coverage
 htmlcov
 .venv
+venv/
 DATA
