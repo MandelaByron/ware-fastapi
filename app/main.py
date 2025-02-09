@@ -34,58 +34,58 @@ def format_us_phone(number: str) -> str:
 async def webhook(request : Request, client: httpx.AsyncClient = Depends(get_http_client)):
     data = await request.json()
     
-    eventData = data.get("event")
+    # eventData = data.get("event")
     
-    pulseID = eventData["pulseId"]
+    # pulseID = eventData["pulseId"]
     
-    boardID = eventData['boardId']
+    # boardID = eventData['boardId']
     
-    pulseName = eventData['pulseName']
+    # pulseName = eventData['pulseName']
     
     
-    order_response = await get_order_properties(pulseName)
+    # order_response = await get_order_properties(pulseName)
     
-    order_data = order_response.get('data').get('order')
-    customer_data = order_data.get('customer').get('addressesV2').get('nodes')[0]
+    # order_data = order_response.get('data').get('order')
+    # customer_data = order_data.get('customer').get('addressesV2').get('nodes')[0]
     
-    fullname = customer_data.get('name')
+    # fullname = customer_data.get('name')
     
-    company = customer_data.get('company')
+    # company = customer_data.get('company')
     
-    if not company:
-        company = fullname
+    # if not company:
+    #     company = fullname
         
-    payload = {
-        "country": customer_data.get('countryCodeV2'),
-        'fullname':fullname,
-        'company': company,
-        'addr1': customer_data.get('address1'),
-        'addr2': customer_data.get('address2'),
-        'city':customer_data.get('city'),
-        'state': customer_data.get('provinceCode'),
-        'phone':format_us_phone(customer_data.get('phone')),
-        'zip':customer_data.get('zip'),
-        "isresidential": "T",
-        "defaultshipping": "T",
-    }
+    # payload = {
+    #     "country": customer_data.get('countryCodeV2'),
+    #     'fullname':fullname,
+    #     'company': company,
+    #     'addr1': customer_data.get('address1'),
+    #     'addr2': customer_data.get('address2'),
+    #     'city':customer_data.get('city'),
+    #     'state': customer_data.get('provinceCode'),
+    #     'phone':format_us_phone(customer_data.get('phone')),
+    #     'zip':customer_data.get('zip'),
+    #     "isresidential": "T",
+    #     "defaultshipping": "T",
+    # }
 
-    processed_items = []
-    items = [
-        {"sku": item['sku'], "name": item['name'], 'quantity': item['quantity']}
-        for item in order_data['lineItems']['nodes']
-    ]
+    # processed_items = []
+    # items = [
+    #     {"sku": item['sku'], "name": item['name'], 'quantity': item['quantity']}
+    #     for item in order_data['lineItems']['nodes']
+    # ]
         
-    for item in items:
-        internalid = await get_item_data(sku=item['sku'], client=client)
-        if internalid:
-            item['internalid'] = internalid
-            processed_items.append(item)  # Keep only valid items
-        # Execute independent API calls in parallel
-    await asyncio.gather(
-        add_items_to_cart(client, items=processed_items),
-        add_new_address(client=client, payload=payload),
-        change_status(itemID=pulseID, board_id=boardID)
-    )
+    # for item in items:
+    #     internalid = await get_item_data(sku=item['sku'], client=client)
+    #     if internalid:
+    #         item['internalid'] = internalid
+    #         processed_items.append(item)  # Keep only valid items
+    #     # Execute independent API calls in parallel
+    # await asyncio.gather(
+    #     add_items_to_cart(client, items=processed_items),
+    #     add_new_address(client=client, payload=payload),
+    #     change_status(itemID=pulseID, board_id=boardID)
+    # )
 
 
     return data
