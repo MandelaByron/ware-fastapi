@@ -1,10 +1,8 @@
 
 import httpx
 from fastapi import Depends
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 
 PASSWORD = os.environ.get("LOGIN_PASSWORD")
 EMAIL = os.environ.get("LOGIN_EMAIL")

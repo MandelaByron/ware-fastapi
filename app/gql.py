@@ -1,9 +1,6 @@
 import httpx
 import json
-from dotenv import load_dotenv
 import os
-
-load_dotenv()
 
 MONDAY_AUTH = os.environ.get("MONDAY_ACCESS_KEY")
 HEADERS = {
