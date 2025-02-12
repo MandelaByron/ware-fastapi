@@ -49,25 +49,29 @@ async def webhook(request : Request, client: httpx.AsyncClient = Depends(get_htt
     order_response = await get_order_properties(pulseName)
     
     order_data = order_response.get('data').get('order')
-    customer_data = order_data.get('customer').get('addressesV2').get('nodes')[0]
     
-    fullname = customer_data.get('name')
+    shipping_data = order_data.get('shippingAddress')
     
-    company = customer_data.get('company')
+    fullname = shipping_data.get('name')
+    
+    company = shipping_data.get('company')
+    
+    phone_number = shipping_data.get('phone')
+    
     
     if not company:
         company = fullname
         
     payload = {
-        "country": customer_data.get('countryCodeV2'),
+        "country": shipping_data.get('countryCodeV2'),
         'fullname':fullname,
         'company': company,
-        'addr1': customer_data.get('address1'),
-        'addr2': customer_data.get('address2'),
-        'city':customer_data.get('city'),
-        'state': customer_data.get('provinceCode'),
-        'phone':format_us_phone(customer_data.get('phone')),
-        'zip':customer_data.get('zip'),
+        'addr1': shipping_data.get('address1'),
+        'addr2': shipping_data.get('address2'),
+        'city':shipping_data.get('city'),
+        'state': shipping_data.get('provinceCode'),
+        'phone':format_us_phone(phone_number) if phone_number else None,
+        'zip':shipping_data.get('zip'),
         "isresidential": "T",
         "defaultshipping": "T",
     }

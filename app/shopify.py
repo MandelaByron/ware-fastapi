@@ -22,21 +22,16 @@ async def get_order_properties(orderID: str) -> dict:
         order(id: $id) {
             id
             name
-            customer{
-                addressesV2(first: 1){
-                    nodes {
-                        address1
-                        address2
-                        city
-                        company
-                        countryCodeV2
-                        zip
-                        provinceCode
-                        phone
-                        name
-                        
-                    }
-                }
+            shippingAddress{
+                address1
+                address2
+                city
+                company
+                countryCodeV2
+                zip
+                provinceCode
+                phone
+                name                
             }
             totalPriceSet {
             presentmentMoney {
