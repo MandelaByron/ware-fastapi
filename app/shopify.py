@@ -33,6 +33,17 @@ async def get_order_properties(orderID: str) -> dict:
                 phone
                 name                
             }
+            billingAddress{
+                address1
+                address2
+                city
+                company
+                countryCodeV2
+                zip
+                provinceCode
+                phone
+                name                
+            }            
             totalPriceSet {
             presentmentMoney {
                 amount

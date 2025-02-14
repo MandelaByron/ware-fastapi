@@ -52,6 +52,9 @@ async def webhook(request : Request, client: httpx.AsyncClient = Depends(get_htt
     
     shipping_data = order_data.get('shippingAddress')
     
+    if shipping_data == None:
+        shipping_data = order_data.get('billingAddress')
+    
     fullname = shipping_data.get('name')
     
     company = shipping_data.get('company')
