@@ -13,10 +13,12 @@ app = FastAPI()
 
 api_version = os.environ.get('API_VERSION')
 
+test_key = os.environ.get('TEST_KEY')
+
 #client = client_manager.get_client()
 @app.get("/")
 def health_check():
-    return {"status": "ok, this is my health check 2", 'API_VERSION': api_version}
+    return {"status": "ok, this is my health check 3", 'API_VERSION': api_version, "TEST_KEY": test_key}
 
 def format_us_phone(number: str) -> str:
     """Formats a U.S. phone number to (XXX) YYY-ZZZZ, handling +1 country code if present."""
