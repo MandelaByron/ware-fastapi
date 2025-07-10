@@ -81,25 +81,25 @@ async def webhook(request : Request, client: httpx.AsyncClient = Depends(get_htt
         "defaultshipping": "T",
     }
 
-    processed_items = []
-    items = [
-        {"sku": item['sku'], "name": item['name'], 'quantity': item['quantity']}
-        for item in order_data['lineItems']['nodes']
-    ]
+    # processed_items = []
+    # items = [
+    #     {"sku": item['sku'], "name": item['name'], 'quantity': item['quantity']}
+    #     for item in order_data['lineItems']['nodes']
+    # ]
         
-    for item in items:
-        internalid = await get_item_data(sku=item['sku'], client=client)
-        if internalid:
-            item['internalid'] = internalid
-            processed_items.append(item)  # Keep only valid items
-        # Execute independent API calls in parallel
-    await asyncio.gather(
-        add_items_to_cart(client, items=processed_items),
-        add_new_address(client=client, payload=payload),
-        change_status(itemID=pulseID, board_id=boardID)
-    )
+    # for item in items:
+    #     internalid = await get_item_data(sku=item['sku'], client=client)
+    #     if internalid:
+    #         item['internalid'] = internalid
+    #         processed_items.append(item)  # Keep only valid items
+    #     # Execute independent API calls in parallel
+    # await asyncio.gather(
+    #     add_items_to_cart(client, items=processed_items),
+    #     add_new_address(client=client, payload=payload),
+    #     change_status(itemID=pulseID, board_id=boardID)
+    # )
 
 
-    return data
+    # return data
 
 
