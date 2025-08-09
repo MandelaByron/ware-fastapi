@@ -38,68 +38,73 @@ def format_us_phone(number: str) -> str:
 @app.post("/webhook")
 async def webhook(request : Request, client: httpx.AsyncClient = Depends(get_http_client)):
     data = await request.json()
-    
-    eventData = data.get("event")
-    
-    pulseID = eventData["pulseId"]
-    
-    boardID = eventData['boardId']
-    
-    pulseName = eventData['pulseName']
-    
-    
-    order_response = await get_order_properties(pulseName)
-    
-    order_data = order_response.get('data').get('order')
-    
-    shipping_data = order_data.get('shippingAddress')
-    
-    if shipping_data == None:
-        shipping_data = order_data.get('billingAddress')
-    
-    fullname = shipping_data.get('name')
-    
-    company = shipping_data.get('company')
-    
-    phone_number = shipping_data.get('phone')
-    
-    
-    if not company:
-        company = fullname
+
+    #challenge = data['challenge']
+    if "challenge" in data:
+        print(f"Received verification challenge: {data['challenge']}")
+        return {"challenge": data['challenge']}
+    else:
+        eventData = data.get("event")
         
-    payload = {
-        "country": shipping_data.get('countryCodeV2'),
-        'fullname':fullname,
-        'company': company,
-        'addr1': shipping_data.get('address1'),
-        'addr2': shipping_data.get('address2'),
-        'city':shipping_data.get('city'),
-        'state': shipping_data.get('provinceCode'),
-        'phone':format_us_phone(phone_number) if phone_number else None,
-        'zip':shipping_data.get('zip'),
-        "isresidential": "T",
-        "defaultshipping": "T",
-    }
-
-    processed_items = []
-    items = [
-        {"sku": item['sku'], "name": item['name'], 'quantity': item['quantity']}
-        for item in order_data['lineItems']['nodes']
-    ]
+        pulseID = eventData["pulseId"]
         
-    for item in items:
-        internalid = await get_item_data(sku=item['sku'], client=client)
-        if internalid:
-            item['internalid'] = internalid
-            processed_items.append(item)  # Keep only valid items
-        # Execute independent API calls in parallel
-    await asyncio.gather(
-        add_items_to_cart(client, items=processed_items),
-        add_new_address(client=client, payload=payload),
-        change_status(itemID=pulseID, board_id=boardID)
-    )
+        boardID = eventData['boardId']
+        
+        pulseName = eventData['pulseName']
+        
+        
+        order_response = await get_order_properties(pulseName)
+        
+        order_data = order_response.get('data').get('order')
+        
+        shipping_data = order_data.get('shippingAddress')
+        
+        if shipping_data == None:
+            shipping_data = order_data.get('billingAddress')
+        
+        fullname = shipping_data.get('name')
+        
+        company = shipping_data.get('company')
+        
+        phone_number = shipping_data.get('phone')
+        
+        
+        if not company:
+            company = fullname
+            
+        payload = {
+            "country": shipping_data.get('countryCodeV2'),
+            'fullname':fullname,
+            'company': company,
+            'addr1': shipping_data.get('address1'),
+            'addr2': shipping_data.get('address2'),
+            'city':shipping_data.get('city'),
+            'state': shipping_data.get('provinceCode'),
+            'phone':format_us_phone(phone_number) if phone_number else None,
+            'zip':shipping_data.get('zip'),
+            "isresidential": "T",
+            "defaultshipping": "T",
+        }
+
+        processed_items = []
+        items = [
+            {"sku": item['sku'], "name": item['name'], 'quantity': item['quantity']}
+            for item in order_data['lineItems']['nodes']
+        ]
+            
+        for item in items:
+            internalid = await get_item_data(sku=item['sku'], client=client)
+            if internalid:
+                item['internalid'] = internalid
+                processed_items.append(item)  # Keep only valid items
+            # Execute independent API calls in parallel
+        await asyncio.gather(
+            add_items_to_cart(client, items=processed_items),
+            add_new_address(client=client, payload=payload),
+            change_status(itemID=pulseID, board_id=boardID)
+        )
 
 
-    return data
+        return data
 
 
