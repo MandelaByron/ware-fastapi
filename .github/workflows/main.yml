@@ -21,8 +21,9 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@ec2-13-60-59-122.eu-north-1.compute.amazonaws.com << 'EOF'
-            cd /home/ubuntu/ware-updater
-            #git pull origin main
+            cd /home/ubuntu/ware-fastapi
+            git pull origin main
+            docker compose up -d --build
             # If using a virtual environment, restart the application
             # source venv/bin/activate
             # Restart services if needed
